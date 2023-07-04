@@ -54,11 +54,11 @@
 
 <div id="loader">
     <div class="awtCanvas1" style="transform: scale(calc(0.13*var(--agwww)));">
-        <img src="gameLogo.png" class="gameLogo" style="display: block;">
-        <div class="progressBar" style="display: block;">
+        <img src="gameLogo.png" class="gameLogo" style="display: none;">
+        <div class="progressBar" style="display: none;">
             <div class="full"></div>
         </div>
-        <p class="progressText" style="display: block;"> LOADING...</p>
+        <p class="progressText" style="display: none;"> LOADING...</p>
         <div id="startToLoadButtonDiv">
             <button id="startToLoadButton" onclick="startToLoad();">
                 RUN GAME
@@ -114,7 +114,7 @@
                 </button>
             </div>
         </div>
-        <button style="display: inline;" id="playPongButton" onclick="
+        <button style="display: none;" id="playPongButton" onclick="
                 document.querySelector('.hideButton2').style.opacity = '100%';
                 document.querySelector('.hideButton2').style.pointerEvents = 'all';
                 document.querySelector('#gamePongCanvas').style.height='260px';
@@ -164,7 +164,7 @@
                 </button>
             </div>
         </div>
-        <div class="description" style="height: 200px; width: 800px; margin-top: 0px; margin-bottom: 0px; background-color: rgba(0, 23, 20, 0.11); transform: scale(.65), translate(-50%,-50%); justify-content: center; align-items: center; display: flex; margin-right: auto; margin-left: auto; position: fixed; bottom: 50px; top: auto; left: 5px; right: 5px; transform: scale(.5) translate(0%, 50%); pointer-events: all;">
+        <div class="description" style="height: 200px; width: 800px; margin-top: 0px; margin-bottom: 0px; background-color: rgba(0, 23, 20, 0.11); transform: scale(.65), translate(-50%,-50%); justify-content: center; align-items: center; display: none; margin-right: auto; margin-left: auto; position: fixed; bottom: 50px; top: auto; left: 5px; right: 5px; transform: scale(.5) translate(0%, 50%); pointer-events: all;">
             <p style="color: rgb(190, 246, 255);letter-spacing: 1px;position: relative;font-family: Consolas, &quot;Andale Mono&quot;, &quot;Lucida Console&quot;, &quot;Lucida Sans Typewriter&quot;, Monaco, &quot;Courier New&quot;, monospace;text-align: center;font-size: 29px;font-weight: 700;margin-top: auto;margin-bottom: auto;margin-right: auto;margin-left: auto;font-style: normal;text-shadow: 2px 2px 2px rgb(0, 90, 169);line-height: initial;" class="descriptionText">
                 [GAME NAME] is a multiplayer, first-person shooter game. The game is in early development but is updated regularly with new content.
             </p>
@@ -278,7 +278,7 @@
             <img class="companyLogoImage" src="companyLogo.png">
         </a>
         <button title="Enter fullscreen" id="fullscreenButton" onclick="toggle_fullscreen()"
-                style="width: calc(var(--agw)*8); height: calc(var(--agw)*8); position: absolute; bottom: 0px; right: 0px; margin: 1.5vw; font-size: 16px; display: block; transition: opacity 0.4s ease 0s; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; padding: 0px; border: 0px none; cursor: pointer; appearance: button; text-rendering: auto; letter-spacing: normal; word-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none; text-align: center; align-items: flex-start; box-sizing: border-box; pointer-events: all;">
+                style="width: calc(var(--agw)*8); height: calc(var(--agw)*8); position: absolute; bottom: 0px; right: 0px; margin: 1.5vw; font-size: 16px; display: none; transition: opacity 0.4s ease 0s; background: rgba(0, 0, 0, 0) none repeat scroll 0% 0%; padding: 0px; border: 0px none; cursor: pointer; appearance: button; text-rendering: auto; letter-spacing: normal; word-spacing: normal; text-transform: none; text-indent: 0px; text-shadow: none; text-align: center; align-items: flex-start; box-sizing: border-box; pointer-events: all;">
             <img src="fullScreenButton.svg" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 100%;">
         </button>
     </div>
