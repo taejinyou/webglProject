@@ -3,9 +3,27 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>Unity WebGL Player | Closet</title>
+    <title>Unity WebGL Player | WEBGL_BetterUI</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
+   <style>
+  body, html {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+  }
+  #unity-container {
+    width: 100%;
+    height: 100%;
+  }
+  canvas {
+    width: 100% !important;
+    height: 100% !important;
+  }
+</style>
+
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
@@ -20,7 +38,7 @@
       <div id="unity-footer">
         <div id="unity-webgl-logo"></div>
         <div id="unity-fullscreen-button"></div>
-        <div id="unity-build-title">Closet</div>
+        <div id="unity-build-title">WEBGL_BetterUI</div>
       </div>
     </div>
     <script>
@@ -57,14 +75,14 @@
       }
 
       var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Build.loader.js";
+      var loaderUrl = buildUrl + "/build.loader.js";
       var config = {
-        dataUrl: buildUrl + "/0668adc9dc1946a9ddb366425da11dcd.data",
-        frameworkUrl: buildUrl + "/e31f0ed44a7c902a8221ad98e3a6b9a2.js",
-        codeUrl: buildUrl + "/801725e43b3ae59a32913f2c33ba9138.wasm",
+        dataUrl: buildUrl + "/build.data",
+        frameworkUrl: buildUrl + "/build.framework.js",
+        codeUrl: buildUrl + "/build.wasm",
         streamingAssetsUrl: "StreamingAssets",
-        companyName: "Anice",
-        productName: "Closet",
+        companyName: "DefaultCompany",
+        productName: "WEBGL_BetterUI",
         productVersion: "0.1.0",
         showBanner: unityShowBanner,
       };
