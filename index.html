@@ -6,7 +6,6 @@
     <title>Unity WebGL Player | Closet</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <!-- Load the correct Brotli library -->
     <script src="https://cdn.jsdelivr.net/npm/fflate/umd/index.min.js"></script>
   </head>
   <body>
@@ -26,14 +25,8 @@
       </div>
     </div>
     <script>
-      var container = document.querySelector("#unity-container");
-      var canvas = document.querySelector("#unity-canvas");
-      var loadingBar = document.querySelector("#unity-loading-bar");
-      var progressBarFull = document.querySelector("#unity-progress-bar-full");
-      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
-      var warningBanner = document.querySelector("#unity-warning");
-
       function unityShowBanner(msg, type) {
+        var warningBanner = document.querySelector("#unity-warning");
         function updateBannerVisibility() {
           warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
         }
@@ -46,26 +39,6 @@
           warningBanner.removeChild(div);
           updateBannerVisibility();
         }, 5000);
-      }
-
-      var buildUrl = "Build";
-      var loaderUrl = buildUrl + "/Build.loader.js";
-      var config = {
-        dataUrl: buildUrl + "/ee65f5d9588a7c117ebf829714610c1f.data.br",
-        frameworkUrl: buildUrl + "/382d1201fd882b63b64e23ba081c758a.js.br",
-        codeUrl: buildUrl + "/43eb5e710c473485b1769f4094bdd0ec.wasm.br",
-        streamingAssetsUrl: "StreamingAssets",
-        companyName: "Anice",
-        productName: "Closet",
-        productVersion: "0.1.0",
-        showBanner: unityShowBanner,
-      };
-
-      async function fetchAndDecompress(url) {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error('Failed to fetch: ' + url);
-        const compressed = await response.arrayBuffer();
-        return fflate.decompressSync(new Uint8Array(compressed)); // Assuming Brotli is being used and fflate can handle it.
       }
 
       async function loadGame() {
