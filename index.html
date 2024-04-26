@@ -59,9 +59,9 @@
           ]);
 
           var unityConfig = Object.assign(config, {
-            data: data,
-            framework: framework,
-            code: code,
+            data: data.buffer,
+            framework: framework.buffer,
+            code: code.buffer,
             streamingAssetsUrl: "StreamingAssets",
             onProgress: function(progress) {
               progressBarFull.style.width = 100 * progress + "%";
