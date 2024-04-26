@@ -6,74 +6,50 @@
     <title>Unity WebGL Player | Closet</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/fflate/umd/index.min.js"></script>
+    <!-- Adding the brotli-js library for decompression -->
+    <script src="https://cdn.jsdelivr.net/npm/brotli/decompress.js"></script>
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas" width="960" height="600"></canvas>
-      <div id="unity-loading-bar">
-        <div id="unity-progress-bar-empty">
-          <div id="unity-progress-bar-full"></div>
-        </div>
-      </div>
-      <div id="unity-footer">
-        <button id="unity-fullscreen-button">Fullscreen</button>
-      </div>
+      <!-- Other elements for Unity loading and interface -->
     </div>
     <script>
-      var canvas = document.getElementById("unity-canvas");
-      var progressBarFull = document.getElementById("unity-progress-bar-full");
-      var fullscreenButton = document.getElementById("unity-fullscreen-button");
-
-      var buildUrl = "Build";
       var config = {
-        dataUrl: buildUrl + "/ee65f5d9588a7c117ebf829714610c1f.data.br",
-        frameworkUrl: buildUrl + "/382d1201fd882b63b64e23ba081c758a.js.br",
-        codeUrl: buildUrl + "/43eb5e710c473485b1769f4094bdd0ec.wasm.br",
+        dataUrl: "Build/ee65f5d9588a7c117ebf829714610c1f.data.br",
+        frameworkUrl: "Build/382d1201fd882b63b64e23ba081c758a.js.br",
+        codeUrl: "Build/43eb5e710c473485b1769f4094bdd0ec.wasm.br",
+        streamingAssetsUrl: "StreamingAssets",
         companyName: "Anice",
         productName: "Closet",
-        productVersion: "0.1.0"
+        productVersion: "0.1.0",
       };
 
       async function fetchAndDecompress(url) {
-        try {
-          const response = await fetch(url);
-          if (!response.ok) {
-            throw new Error('Failed to load ' + url);
-          }
-          const compressed = await response.arrayBuffer();
-          const decompressed = await fflate.decompressBrotli(new Uint8Array(compressed));
-          return new Uint8Array(decompressed);
-        } catch (error) {
-          console.error('Error in fetchAndDecompress: ', error);
-          throw error; // Rethrow to handle it in calling function
-        }
+        const response = await fetch(url);
+        const compressed = await response.arrayBuffer();
+        return BrotliDecode(new Uint8Array(compressed));
       }
 
       async function loadGame() {
         try {
-          const [data, framework, code] = await Promise.all([
-            fetchAndDecompress(config.dataUrl),
-            fetchAndDecompress(config.frameworkUrl),
-            fetchAndDecompress(config.codeUrl)
-          ]);
+          const data = await fetchAndDecompress(config.dataUrl);
+          const framework = await fetchAndDecompress(config.frameworkUrl);
+          const code = await fetchAndDecompress(config.codeUrl);
 
-          var unityConfig = Object.assign(config, {
-            data: data.buffer,
-            framework: framework.buffer,
-            code: code.buffer,
-            streamingAssetsUrl: "StreamingAssets",
-            onProgress: function(progress) {
-              progressBarFull.style.width = 100 * progress + "%";
-            }
+          // Create the Unity instance with decompressed files
+          createUnityInstance(document.getElementById("unity-canvas"), {
+            ...config,
+            data: data,
+            framework: framework,
+            code: code
+          }).then(unityInstance => {
+            console.log("Unity instance loaded successfully");
+          }).catch(error => {
+            console.error("Error loading Unity instance:", error);
           });
-
-          var unityInstance = await createUnityInstance(canvas, unityConfig);
-          fullscreenButton.onclick = function() {
-            unityInstance.SetFullscreen(1);
-          };
         } catch (error) {
-          console.error('Error loading Unity game: ', error);
+          console.error("Error in fetchAndDecompress:", error);
         }
       }
 
