@@ -6,21 +6,47 @@
     <title>Unity WebGL Player | Closet</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
+    <!-- Load the correct Brotli library -->
     <script src="https://cdn.jsdelivr.net/npm/fflate/umd/index.min.js"></script>
   </head>
   <body>
     <div id="unity-container" class="unity-desktop">
-      <!-- ... -->
+      <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
+      <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+          <div id="unity-progress-bar-full"></div>
+        </div>
+      </div>
+      <div id="unity-warning"></div>
+      <div id="unity-footer">
+        <div id="unity-webgl-logo"></div>
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">Closet</div>
+      </div>
     </div>
     <script>
-      // ... 
+      var container = document.querySelector("#unity-container");
+      var canvas = document.querySelector("#unity-canvas");
+      var loadingBar = document.querySelector("#unity-loading-bar");
+      var progressBarFull = document.querySelector("#unity-progress-bar-full");
+      var fullscreenButton = document.querySelector("#unity-fullscreen-button");
+      var warningBanner = document.querySelector("#unity-warning");
 
-      async function decompressBrotli(compressedData) {
-        const decompressedData = await fflate.decompressBrotli(compressedData);
-        return decompressedData;
+      function unityShowBanner(msg, type) {
+        function updateBannerVisibility() {
+          warningBanner.style.display = warningBanner.children.length ? 'block' : 'none';
+        }
+        var div = document.createElement('div');
+        div.innerHTML = msg;
+        warningBanner.appendChild(div);
+        if (type == 'error') div.style = 'background: red; padding: 10px;';
+        else if (type == 'warning') div.style = 'background: yellow; padding: 10px;';
+        setTimeout(function() {
+          warningBanner.removeChild(div);
+          updateBannerVisibility();
+        }, 5000);
       }
-
-      // ...
 
       var buildUrl = "Build";
       var loaderUrl = buildUrl + "/Build.loader.js";
@@ -35,30 +61,54 @@
         showBanner: unityShowBanner,
       };
 
-      // ...
+      async function fetchAndDecompress(url) {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error('Failed to fetch: ' + url);
+        const compressed = await response.arrayBuffer();
+        return fflate.decompressSync(new Uint8Array(compressed)); // Assuming Brotli is being used and fflate can handle it.
+      }
 
-      script.onload = () => {
-        createUnityInstance(canvas, config, (progress) => {
-          progressBarFull.style.width = 100 * progress + "%";
-        }).then(async (unityInstance) => {
-          loadingBar.style.display = "none";
-          fullscreenButton.onclick = () => {
-            unityInstance.SetFullscreen(1);
-          };
+      async function loadGame() {
+        try {
+          const [data, framework, code] = await Promise.all([
+            fetchAndDecompress(config.dataUrl),
+            fetchAndDecompress(config.frameworkUrl),
+            fetchAndDecompress(config.codeUrl)
+          ]);
 
-          const decompressedData = await decompressBrotli(config.dataUrl);
-          const decompressedFramework = await decompressBrotli(config.frameworkUrl);
-          const decompressedCode = await decompressBrotli(config.codeUrl);
+          var script = document.createElement('script');
+          script.text = `
+            var unityInstance = UnityLoader.instantiate("unityContainer", "Build/unity.json", {
+              onProgress: UnityProgress,
+              Module: {
+                preRun: [function() {
+                  Module.FS_createDataFile('/', 'data', new Uint8Array(${data}), true, true, false);
+                  Module.FS_createPreloadedFile('/', 'framework', new Uint8Array(${framework}), true, true, false);
+                  Module.FS_createPreloadedFile('/', 'code', new Uint8Array(${code}), true, true, false);
+                }]
+              }
+            });
+          `;
+          document.body.appendChild(script);
+        } catch (error) {
+          console.error('Error loading Unity game:', error);
+          unityShowBanner(error.message, 'error');
+        }
+      }
 
-          unityInstance.Module.config.data = decompressedData;
-          unityInstance.Module.config.framework = decompressedFramework;
-          unityInstance.Module.config.code = decompressedCode;
-        }).catch((message) => {
-          alert(message);
-        });
-      };
+      loadGame();
 
-      // ...
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        var meta = document.createElement('meta');
+        meta.name = 'viewport';
+        meta.content = 'width=device-width, height=device-height, initial-scale=1.0, user-scalable=no, shrink-to-fit=yes';
+        document.getElementsByTagName('head')[0].appendChild(meta);
+        container.className = "unity-mobile";
+        canvas.className = "unity-mobile";
+      } else {
+        canvas.style.width = "960px";
+        canvas.style.height = "600px";
+      }
     </script>
   </body>
 </html>
