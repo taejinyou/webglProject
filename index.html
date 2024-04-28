@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity WebGL Player | Closet</title>
+    <link rel="shortcut icon" href="TemplateData/favicon.ico">
+    <link rel="stylesheet" href="TemplateData/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/brotli-js@1.0.2/index.min.js"></script>
+</head>
+<body>
+<div id="unity-container" class="unity-desktop">
+    <canvas id="unity-canvas" width="960" height="600" tabindex="-1"></canvas>
+    <div id="unity-loading-bar">
+        <div id="unity-logo"></div>
+        <div id="unity-progress-bar-empty">
+            <div id="unity-progress-bar-full"></div>
+        </div>
+    </div>
+    <div id="unity-warning"></div>
+    <div id="unity-footer">
+        <div id="unity-webgl-logo"></div>
+        <div id="unity-fullscreen-button"></div>
+        <div id="unity-build-title">Closet</div>
+    </div>
+</div>
+
+<script>
+var buildUrl = "Build";
+var config = {
+    dataUrl: buildUrl + "/ee65f5d9588a7c117ebf829714610c1f.data.br",
+    frameworkUrl: buildUrl + "/382d1201fd882b63b64e23ba081c758a.js.br",
+    codeUrl: buildUrl + "/43eb5e710c473485b1769f4094bdd0ec.wasm.br",
+    streamingAssetsUrl: "StreamingAssets",
+    companyName: "Anice",
+    productName: "Closet",
+    productVersion: "0.1.0"
+};
+
+async function decompressBrotli(url) {
+    const response = await fetch(url);
+    const buffer = await response.arrayBuffer();
+    return BrotliDecode(new Uint8Array(buffer));
+}
+
+async function loadUnity() {
+    try {
+        const [data, framework, code] = await Promise.all([
+            decompressBrotli(config.dataUrl),
+            decompressBrotli(config.frameworkUrl),
+            decompressBrotli(config.codeUrl)
+        ]);
+
+        const unityInstance = await createUnityInstance(document.getElementById('unity-canvas'), {
+            ...config,
+            data: new Blob([data]),
+            framework: new Blob([framework], { type: 'application/javascript' }),
+            code: new Blob([code])
+        });
+
+        document.getElementById('unity-fullscreen-button').onclick = () => unityInstance.SetFullscreen(1);
+    } catch (error) {
+        console.error('Error loading Unity game:', error);
+    }
+}
+
+loadUnity();
+</script>
+</body>
+</html>
